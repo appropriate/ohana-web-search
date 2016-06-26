@@ -1,14 +1,15 @@
-FROM ruby:2.3.1
+FROM ruby:2.3.1-alpine
 
-RUN apt-get update && apt-get install -y nodejs --no-install-recommends && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache nodejs
 
 # PhantomJS is required for running tests
+ENV PHANTOMJS_VERSION 2.1.1
 ENV PHANTOMJS_SHA256 86dd9a4bf4aee45f1a84c9f61cf1947c1d6dce9b9e8d2a907105da7852460d2f
 
-RUN mkdir /usr/local/phantomjs \
-  && curl -o phantomjs.tar.bz2 -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
+RUN curl -o phantomjs.tar.bz2 -f -sSL "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2" \
   && echo "$PHANTOMJS_SHA256 *phantomjs.tar.bz2" | sha256sum -c - \
-  && tar -xjf phantomjs.tar.bz2 -C /usr/local/phantomjs --strip-components=1 \
+  && tar -xjf phantomjs.tar.bz2 -C /usr/local \
+  && mv "/usr/local/phantomjs-$PHANTOMJS_VERSION-linux-x86_64" /usr/local/phantomjs \
   && rm phantomjs.tar.bz2
 
 RUN ln -s ../phantomjs/bin/phantomjs /usr/local/bin/
