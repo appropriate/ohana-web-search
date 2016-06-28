@@ -6,6 +6,11 @@ RUN apk add --no-cache nodejs
 ENV PHANTOMJS_VERSION 2.1.1
 ENV PHANTOMJS_SHA256 86dd9a4bf4aee45f1a84c9f61cf1947c1d6dce9b9e8d2a907105da7852460d2f
 
+# Install runtime dependencies for phantomjs
+RUN apk add --no-cache --virtual .phantomjs-rundeps \
+    fontconfig \
+    libc6-compat
+
 RUN curl -o phantomjs.tar.bz2 -f -sSL "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2" \
   && echo "$PHANTOMJS_SHA256 *phantomjs.tar.bz2" | sha256sum -c - \
   && tar -xjf phantomjs.tar.bz2 -C /usr/local \
