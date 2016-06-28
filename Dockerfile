@@ -1,6 +1,6 @@
 FROM ruby:2.3.1-alpine
 
-RUN apk add --no-cache nodejs
+RUN apk add --no-cache nodejs tzdata
 
 # PhantomJS is required for running tests
 ENV PHANTOMJS_VERSION 2.1.1
