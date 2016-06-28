@@ -19,7 +19,19 @@ WORKDIR /ohana-web-search
 COPY Gemfile /ohana-web-search
 COPY Gemfile.lock /ohana-web-search
 
-RUN bundle install
+# Install runtime libraries needed for Nokogiri and configure it to use them
+RUN apk add --no-cache --virtual .ohana-rundeps \
+    libxml2 \
+    libxslt \
+  && bundle config build.nokogiri --use-system-libraries
+
+# Install gcc and other build-time dependencies to allow bundler to build native extensions, then remove them after bundle install
+RUN apk add --no-cache --virtual .ohana-builddeps \
+    build-base \
+    libxml2-dev \
+    libxslt-dev \
+  && bundle install \
+  && apk del .ohana-builddeps
 
 COPY . /ohana-web-search
 
